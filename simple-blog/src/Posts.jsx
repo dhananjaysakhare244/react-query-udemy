@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PostDetail } from "./PostDetail";
 const maxPostPage = 10;
 
@@ -15,14 +15,14 @@ export function Posts() {
   const [selectedPost, setSelectedPost] = useState(null);
 
   const queryClient = useQueryClient();
-  // useEffect(() => {
-  //   if (currentPage < maxPostPage) {
-  //     const nextPage = currentPage + 1;
-  //     queryClient.prefetchQuery(["posts", nextPage], () =>
-  //       fetchPosts(nextPage)
-  //     );
-  //   }
-  // }, [currentPage, queryClient]);
+  useEffect(() => {
+    if (currentPage < maxPostPage) {
+      const nextPage = currentPage + 1;
+      queryClient.prefetchQuery(["posts", nextPage], () =>
+        fetchPosts(nextPage)
+      );
+    }
+  }, [currentPage, queryClient]);
   const { data, isError, isLoading } = useQuery({
     queryKey: ["posts", currentPage],
     queryFn: () => fetchPosts(currentPage),
