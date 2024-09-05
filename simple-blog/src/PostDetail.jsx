@@ -28,8 +28,12 @@ export function PostDetail({ post }) {
     queryKey: ["fetchComments", post.id],
     queryFn: () => fetchComments(post.id),
   });
-  const deleteMutation = useMutation((postId) => deletePost(postId));
-  const updateMutation = useMutation((postId) => updatePost(postId));
+  const deleteMutation = useMutation({
+    mutationFn: (postId) => deletePost(postId),
+  });
+  const updateMutation = useMutation({
+    mutationFn: (postId) => updatePost(postId),
+  });
   if (isLoading) return <h3>Loading...</h3>;
   if (isError) return <h3>Oops, Something went wrong</h3>;
   return (
