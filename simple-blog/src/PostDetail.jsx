@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from "react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 async function fetchComments(postId) {
   const response = await fetch(
     `https://jsonplaceholder.typicode.com/comments?postId=${postId}`
@@ -24,10 +24,10 @@ async function updatePost(postId) {
 
 export function PostDetail({ post }) {
   // replace with useQuery
-  const { data, isError, isLoading } = useQuery(
-    ["fetchComments", post.id],
-    () => fetchComments(post.id)
-  );
+  const { data, isError, isLoading } = useQuery({
+    queryKey: ["fetchComments", post.id],
+    queryFn: () => fetchComments(post.id),
+  });
   const deleteMutation = useMutation((postId) => deletePost(postId));
   const updateMutation = useMutation((postId) => updatePost(postId));
   if (isLoading) return <h3>Loading...</h3>;
