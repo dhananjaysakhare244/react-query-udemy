@@ -1,2 +1,2 @@
-simple-blog/node_modules
-simple-blog/build
+**/node_modules
+**/build
