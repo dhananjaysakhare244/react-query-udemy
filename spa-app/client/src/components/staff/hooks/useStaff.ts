@@ -1,7 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import type { Staff } from "@shared/types";
+
+import { filterByTreatment } from "../utils";
 
 import { axiosInstance } from "@/axiosInstance";
 import { queryKeys } from "@/react-query/constants";
@@ -15,10 +17,18 @@ async function getStaff(): Promise<Staff[]> {
 export function useStaff() {
   const [filter, setFilter] = useState("all");
 
+  const selectFn = useCallback(
+    (data: Staff[]) => {
+      if (filter === "all") return data;
+      return filterByTreatment(data, filter);
+    },
+    [filter]
+  );
   const fallback: Staff[] = [];
   const { data: staff = fallback } = useQuery({
     queryKey: [queryKeys.staff],
     queryFn: getStaff,
+    select: selectFn,
   });
   return { staff, filter, setFilter };
 }
