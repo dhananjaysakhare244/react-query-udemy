@@ -1,8 +1,9 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { AppointmentDateMap } from "../types";
+import { getAvailableAppointments } from "../utils";
 import { getMonthYearDetails, getNewMonthYear } from "./monthYear";
 
 import { useLoginData } from "@/auth/AuthContext";
@@ -40,9 +41,17 @@ export function useAppointments() {
 
   const fallback: AppointmentDateMap = {};
 
+  const selectFn = useCallback(
+    (data: AppointmentDateMap, showAll: boolean) => {
+      if (showAll) return data;
+      return getAvailableAppointments(data, userId);
+    },
+    [userId]
+  );
   const { data: appointments = fallback } = useQuery({
     queryKey: [queryKeys.appointments, monthYear.year, monthYear.month],
     queryFn: () => getAppointments(monthYear.year, monthYear.month),
+    select: (data) => selectFn(data, showAll),
   });
 
   return { appointments, monthYear, updateMonthYear, showAll, setShowAll };
