@@ -17,7 +17,10 @@ async function getAppointments(
   const { data } = await axiosInstance.get(`/appointments/${year}/${month}`);
   return data;
 }
-
+const commonOptions = {
+  staleTime: 0,
+  gcTime: 300000,
+};
 export function useAppointments() {
   const currentMonthYear = getMonthYearDetails(dayjs());
   const [monthYear, setMonthYear] = useState(currentMonthYear);
@@ -28,6 +31,7 @@ export function useAppointments() {
     queryClient.prefetchQuery({
       queryKey: [queryKeys.appointments, year, month],
       queryFn: () => getAppointments(year, month),
+      ...commonOptions,
     });
   }, [monthYear, queryClient]);
 
@@ -52,6 +56,9 @@ export function useAppointments() {
     queryKey: [queryKeys.appointments, monthYear.year, monthYear.month],
     queryFn: () => getAppointments(monthYear.year, monthYear.month),
     select: (data) => selectFn(data, showAll),
+
+    refetchOnWindowFocus: true,
+    ...commonOptions,
   });
 
   return { appointments, monthYear, updateMonthYear, showAll, setShowAll };
