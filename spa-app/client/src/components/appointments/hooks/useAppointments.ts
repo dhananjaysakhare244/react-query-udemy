@@ -58,6 +58,7 @@ export function useAppointments() {
     select: (data) => selectFn(data, showAll),
 
     refetchOnWindowFocus: true,
+    refetchInterval: 60000, //every minute
     ...commonOptions,
   });
 
